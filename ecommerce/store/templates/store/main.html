@@ -1,0 +1,84 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script>
+        let user = '{{request.user}}'
+        //This function gets cookie with a given name
+        function getToken(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getToken('csrftoken');
+
+
+        // COOKIE
+        // function gets cookies from browser
+        function getCookie(name){
+            // split cookie  string and get all individual name = value pairs in an array
+            let cookieArr = document.cookie.split(';');
+            // loop through the array elements
+            for (let i=0;i<cookieArr.length;i++){
+                let cookiePair = cookieArr[i].split('=');
+                /*Removing white space at the beginning of cookie name and compare it with cookie name passed in('cart')*/
+                if(name==cookiePair[0].trim()){
+                    // Decode the cookie value and return it
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            // if there is no element by name cart return null
+            return null
+        }
+        // GET the cookie -> cart from function and parse it s value to JS OBJECT so that we can use it
+
+        let cart = JSON.parse(getCookie('cart'))
+        // if the cart cookie is null -> we set it up 
+        // it for everyone (guests and logged in users)
+        //  domain for cookie is set to main(base) whose url is / so it doest change as we navigate through pages
+        // should be a string
+        
+        if (cart == undefined){
+            cart = {};
+            console.log('cart is created');
+            // set this cart as a COOKIE
+            document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/';
+        }
+        console.log(cart);
+
+    </script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/main.css'%}">
+    <title>E-shop</title>
+    </head>
+    <body>
+        {%include 'store/navbar.html'%}
+        <div class="container">
+            {%block content%} {% endblock content%}
+        </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!--CART JS-->
+    <script src="{% static 'js/cart.js'%}"></script>
+    </body>
+</html>
